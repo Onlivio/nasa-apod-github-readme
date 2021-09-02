@@ -1,0 +1,25 @@
+{
+  "name": "nasa-apod-github-readme",
+  "version": "1.0.0",
+  "description": "This simple app allows you to add a badge with NASA's Astronomy Pircture of the Day to your Github README",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./api/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NominalTrajectory/nasa-apod-github-readme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NominalTrajectory/nasa-apod-github-readme/issues"
+  },
+  "homepage": "https://github.com/NominalTrajectory/nasa-apod-github-readme#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "fastify": "^3.20.2",
+    "image-to-base64": "^2.2.0"
+  }
+}
