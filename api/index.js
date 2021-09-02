@@ -35,7 +35,7 @@ server.get('/', async (request, reply) => {
     reply.send(currentTemplate);
 });
 
-server.listen(process.env.PORT || 5000, (err, address) => {
+server.listen(process.env.PORT || 5000, process.env.HOST || '::', (err, address) => {
     if(err) {
         console.log(err);
     } else {
