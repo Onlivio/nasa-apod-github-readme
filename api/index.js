@@ -1,3 +1,4 @@
+require('dotenv').config()
 const axios = require('axios');
 const fs = require('fs');
 const imageToBase64 = require('image-to-base64');
@@ -8,6 +9,7 @@ const API_KEY = process.env.API_KEY;
 
 const TEMPLATE_FULL = fs.readFileSync(__dirname + '/templates/full.html', 'utf-8');
 
+let APOD_DATA_AUTO_REFRESHED = null;
 
 // Helper Functions
 async function getApodData() {
@@ -20,11 +22,25 @@ async function getApodData() {
     return res.data;
 }
 
+async function refreshApodData() {
+    APOD_DATA_AUTO_REFRESHED = await getApodData();
+}
+
+function initializeApodDataRefresher() {
+    refreshApodData();
+    setInterval(refreshApodData, 1000 * 60 * 60);
+}
+
+initializeApodDataRefresher();
+
 // Server
 server.get('/', async (request, reply) => {
-    let apodData = await getApodData();
-    let imageEncoded = await imageToBase64(apodData.url);
+    let apodData = APOD_DATA_AUTO_REFRESHED;
+    if(!apodData) {
+        reply.send('No data available.');
+    }
 
+    let imageEncoded = await imageToBase64(apodData.url);
     let currentTemplate = TEMPLATE_FULL;
     currentTemplate = currentTemplate.replace("{{DATE}}", new Date(apodData.date).toDateString());
     currentTemplate = currentTemplate.replace("{{IMAGE}}", `data:image/png;base64, ${imageEncoded}`);
@@ -32,6 +48,7 @@ server.get('/', async (request, reply) => {
     currentTemplate = currentTemplate.replace("{{AUTHOR}}", apodData.copyright);
 
     reply.type('image/svg+xml');
+    reply.header('Cache-Control', 's-maxage=60')
     reply.send(currentTemplate);
 });
 

@@ -19,6 +19,7 @@
   "homepage": "https://github.com/NominalTrajectory/nasa-apod-github-readme#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "fastify": "^3.20.2",
     "image-to-base64": "^2.2.0"
   }
