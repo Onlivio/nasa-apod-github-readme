@@ -4,7 +4,7 @@ This simple app allows you to add a badge with NASA's Astronomy Pircture of the 
 
 # How it looks
 
-[<img src="https://nasa-apod-github-readme.herokuapp.com" alt="NASA's Astronomy Picture of the Day" width="400" />](https://apod.nasa.gov/apod/astropix.html)
+[<img src="https://nasa-apod-badge.herokuapp.com" alt="NASA's Astronomy Picture of the Day" width="400" />](https://apod.nasa.gov/apod/astropix.html)
 
 Currently, it works well only with the dark mode, but the light mode support will be added soon :) 
 
@@ -13,5 +13,5 @@ Currently, it works well only with the dark mode, but the light mode support wil
 All you need to do is add this line to your README, the badge will present a different picture every day.
 
 ```md
-[<img src="https://nasa-apod-github-readme.herokuapp.com" alt="NASA's Astronomy Picture of the Day" width="400" />](https://apod.nasa.gov/apod/astropix.html)
+[<img src="https://nasa-apod-badge.herokuapp.com" alt="NASA's Astronomy Picture of the Day" width="400" />](https://apod.nasa.gov/apod/astropix.html)
 ```
