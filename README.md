@@ -4,6 +4,7 @@ This simple app allows you to add a badge with NASA's Astronomy Pircture of the 
 
 # How it looks
 
+[<img src="https://nasa-apod-github-readme.herokuapp.com" alt="NASA's Astronomy Picture of the Day" width="400" />](https://apod.nasa.gov/apod/astropix.html)
 
 Currently, it works well only with the dark mode, but the light mode support will be added soon :) 
 
