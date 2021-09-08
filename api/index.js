@@ -19,6 +19,7 @@ async function getApodData() {
         }
     });
 
+    //console.log(res.data);
     return res.data;
 }
 
@@ -45,7 +46,7 @@ server.get('/', async (request, reply) => {
     currentTemplate = currentTemplate.replace("{{DATE}}", new Date(apodData.date).toDateString());
     currentTemplate = currentTemplate.replace("{{IMAGE}}", `data:image/png;base64, ${imageEncoded}`);
     currentTemplate = currentTemplate.replace("{{TITLE}}", apodData.title);
-    currentTemplate = currentTemplate.replace("{{AUTHOR}}", apodData.copyright);
+    currentTemplate = currentTemplate.replace("{{AUTHOR}}", apodData.copyright ? `by ${apodData.copyright}`: "");
 
     reply.type('image/svg+xml');
     reply.header('Cache-Control', 's-maxage=60')
