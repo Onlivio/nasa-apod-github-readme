@@ -60,7 +60,7 @@ server.get('/', async (request, reply) => {
     reply.send(currentTemplate);
 });
 
-server.listen(process.env.HTTP_SERVER_PORT || 5055, process.env.HTTP_SERVER_HOST || '::', (err, address) => {
+server.listen(process.env.PORT || 8888, process.env.HOST || '0.0.0.0', (err, address) => {
     if(err) {
         console.log(err);
     } else {
