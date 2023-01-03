@@ -1,0 +1,5 @@
+name: nasa-apod-github-readme
+type: 'nodejs:18'
+web:
+  commands:
+    start: npm start
