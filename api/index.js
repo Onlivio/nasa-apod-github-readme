@@ -5,7 +5,7 @@ const imageToBase64 = require('image-to-base64');
 const server = require('fastify')({ logger: false });
 
 const NASA_APOD_ENDPOINT = "https://api.nasa.gov/planetary/apod";
-const API_KEY = process.env.API_KEY;
+const NASA_API_KEY = process.env.NASA_API_KEY;
 
 const TEMPLATE_FULL = fs.readFileSync(__dirname + '/templates/full.html', 'utf-8');
 
@@ -15,12 +15,11 @@ let APOD_DATA_AUTO_REFRESHED = null;
 async function getApodData() {
     let res = await axios.get(NASA_APOD_ENDPOINT, {
         params: {
-            api_key: API_KEY,
+            api_key: NASA_API_KEY,
             thumbs: true,
         }
     });
 
-    //console.log(res.data);
     return res.data;
 }
 
@@ -61,7 +60,7 @@ server.get('/', async (request, reply) => {
     reply.send(currentTemplate);
 });
 
-server.listen(process.env.PORT || 5000, process.env.HOST || '::', (err, address) => {
+server.listen(process.env.HTTP_SERVER_PORT || 5055, process.env.HTTP_SERVER_HOST || '::', (err, address) => {
     if(err) {
         console.log(err);
     } else {
