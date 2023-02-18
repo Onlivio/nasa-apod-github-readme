@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nasa-apod-github-readme
+  namespace: nasa-apod-github-readme
+  labels:
+    app: nasa-apod-github-readme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nasa-apod-github-readme
+  template:
+    metadata:
+      labels:
+        app: nasa-apod-github-readme
+    spec:
+      containers:
+      - name: nasa-apod-github-readme
+        image: ghcr.io/onlivio/nasa-apod-github-readme:v0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          targetPort: 3000
+          protocol: TCP
+        env:
+        - name: NASA_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: nasa-api-key
+              key: apiKey
+      imagePullSecrets:
+      - name: onlivio-ghcr
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: nasa-api-key
+  namespace: nasa-apod-github-readme
+spec:
+  encryptedData:
+    apiKey: AgBTh04SiT3ZWdtwMetvgypldmJmS/esCzdFX6QHMGFi0R1FORt1sdF0zZm3nCggQ+OXkgWUX8DBrdFKjOzvdv4JRvV5gfb76QVk2gH+knWozbBDBNz3+fzdVX+zCgxi0y45f1fsOCLMx+MYfx7Wkh7yOMITZrWseRfxtMk35gbvwbe0vNA9oDUYjyg6Vn6L3fBMXYOQFm9BF3rYovPIjK1yUlDoOqrnBirbBTRutc71/qWieVy4rhHnIzhs+nFLcKmIXcEAmJPRdXXJAlsfg3nO22XhN80W56fKkLeZqrJP9KRDdFMeu7clQr3fR3PbaMU0Xc066Ug0h+RG8rwWnbjLG+nGvmrLb2O7Y5+h+/PhwU81VDRMTtvWv4wZV81WjtP4Psw84sbyipcPnoInBamMcTyrEILBKWqAv+xPp0fvDo8bmL2zxpiIYxgiR814/59jCAjGH27yS1VEewOzjevE+l+IRZFrqB3Uubxg2wD19Ydq4Yd3BzowWSDHcSzG4ZN3kzyo9AeJv7Sh4jOC7W0eiBXwIA5uzdOtn31EEDQsB5GXOlo3Ca9FLHyvk0ZquQd74uTTw26l6Hj1rtff08Yj3env+89Htik1wKi1bw+Y8B7qZ2z6QgqKAMyva0NU0JJcoivbN9m4Picz1E4QL0tjDYqW6LG/KGJbKvJD0XJtUL+OMLTpWPYZyzkGxVsbnAsMTuaLEl9yun6vctPYsjshE7TADMjKA23psA9gnzsrJpwNZrpGedfr
+  template:
+    metadata:
+      name: nasa-api-key
+      namespace: nasa-apod-github-readme

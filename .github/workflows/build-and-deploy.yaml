@@ -1,0 +1,107 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - feature/*
+      - main
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Set IMAGE_REPOSITORY
+        run: |
+          echo "IMAGE_REPOSITORY=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}
+
+  push-docker:
+    needs: 
+      - build-docker
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Set IMAGE_REPOSITORY
+        run: |
+          echo "IMAGE_REPOSITORY=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}:${{ github.ref_name }},ghcr.io/${{ env.IMAGE_REPOSITORY }}:latest
+
+  release:
+    needs: push-docker
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: YAML Lint
+        uses: ibiqlik/action-yamllint@v3.1.1
+        with:
+          file_or_dir: k8s/**/*.yaml
+          config_file: .yamllint.yaml
+
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+    needs: 
+      - yaml-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Deploy
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: apply -f k8s/manifests
