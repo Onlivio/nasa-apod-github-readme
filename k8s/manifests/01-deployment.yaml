@@ -21,9 +21,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-          targetPort: 3000
-          protocol: TCP
         env:
+        - name: PORT
+          value: 3000
         - name: NASA_API_KEY
           valueFrom:
             secretKeyRef:

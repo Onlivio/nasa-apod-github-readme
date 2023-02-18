@@ -9,7 +9,8 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
-    protocol: TCP
     targetPort: 3000
+    protocol: TCP
+    name: http
   selector:
     app: nasa-apod-github-readme
